@@ -68,7 +68,7 @@ func main() {
 
 		found := false
 		for i, v := range word {
-			if string(v) == str {
+			if string(v) == str { // check the presence of guessed key in word
 				//update the placeholder
 				placeholder[i] = str
 				found = true
