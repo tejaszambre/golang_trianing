@@ -19,9 +19,9 @@ func main() {
 	}
 
 	chances := 8
-	guesses := []string{}
 
 	for {
+		guesses := []string{}
 		// evaluate a loss! If user guesses a wrong letter or the wrong word, they lose a chance.
 		userInput := strings.Join(placeholder, "")
 		if chances == 0 && userInput != word {
@@ -33,20 +33,48 @@ func main() {
 			break
 		}
 		// Console display
-		fmt.Println("\n")
+		fmt.Println()
 		fmt.Println(placeholder) // render the placeholder
-		fmt.Println(chances)     // render the chances left
-		for i, _ := range entries {
+		fmt.Println()
+		fmt.Println(chances) // render the chances left
+		for i := range entries {
 			guesses = append(guesses, i)
 		}
+		fmt.Println()
 
 		fmt.Println(guesses) // show the letters or words guessed till now.
-		fmt.Println("Guess a letter or the word: ")
+		fmt.Println()
+		fmt.Print("Guess a letter or the word: ")
 
 		// take the input
 		str := ""
 		fmt.Scanln(&str)
 
 		// compare and update entries, placeholder and chances.
+
+		_, ok := entries[str]
+
+		if ok {
+			continue
+		}
+
+		if str == word {
+			fmt.Println("You win!!!")
+			break
+		}
+
+		found := false
+		for i, v := range word {
+			if string(v) == str {
+				//update the placeholder
+				placeholder[i] = str
+				found = true
+			}
+		}
+		if !found {
+			chances -= 1
+			entries[str] = true
+		}
+
 	}
 }
