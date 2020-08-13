@@ -5,6 +5,13 @@ import (
 	"strings"
 )
 
+func getkeys(entries map[string]bool) (keys []string) {
+	for i := range entries {
+		keys = append(keys, i)
+	}
+	return
+}
+
 func main() {
 	word := "elephant"
 
@@ -21,14 +28,13 @@ func main() {
 	chances := 8
 
 	for {
-		guesses := []string{}
 		// evaluate a loss! If user guesses a wrong letter or the wrong word, they lose a chance.
 		userInput := strings.Join(placeholder, "")
 		if chances == 0 && userInput != word {
 			fmt.Println("You loss! Try Again")
 			break
 		}
-		if chances == 0 && userInput == word {
+		if userInput == word {
 			fmt.Println("You win!!")
 			break
 		}
@@ -36,13 +42,11 @@ func main() {
 		fmt.Println()
 		fmt.Println(placeholder) // render the placeholder
 		fmt.Println()
-		fmt.Println(chances) // render the chances left
-		for i := range entries {
-			guesses = append(guesses, i)
-		}
+		fmt.Println(chances)     // render the chances left
+		keys := getkeys(entries) // get the wrong guessed keys
 		fmt.Println()
 
-		fmt.Println(guesses) // show the letters or words guessed till now.
+		fmt.Println(keys) // show the letters or words guessed till now.
 		fmt.Println()
 		fmt.Print("Guess a letter or the word: ")
 
@@ -52,15 +56,14 @@ func main() {
 
 		// compare and update entries, placeholder and chances.
 
-		_, ok := entries[str]
-
-		if ok {
-			continue
-		}
-
 		if str == word {
 			fmt.Println("You win!!!")
 			break
+		}
+		_, ok := entries[str] // check for duplicated guess
+
+		if ok {
+			continue // if duplicated do nothing and continue
 		}
 
 		found := false
