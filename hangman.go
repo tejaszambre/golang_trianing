@@ -12,7 +12,7 @@ import (
 
 var offline = flag.Bool("offline", false, "elephant")
 
-type hangman struct {
+type hangmanterm struct {
 	entries     map[string]bool // lookup for entries made by the user.
 	placeholder []string        // list of "_" corrosponding to the number of letters in the word. [ _ _ _ _ _ ]
 	word        string
@@ -55,13 +55,11 @@ func getkeys(entries map[string]bool) (keys []string) {
 	return
 }
 
-func playGame(h1 *hangman, done chan bool) {
+func playGame(h1 *hangmanterm, done chan bool) {
 	for {
 		// evaluate a loss! If user guesses a wrong letter or the wrong word, they lose a chance.
 		userInput := strings.Join(h1.placeholder, "")
 		if h1.chances == 0 && userInput != h1.word {
-			fmt.Println("You loss! Try Again")
-			fmt.Println("Word: ", h1.word)
 			done <- false
 			break
 		}
@@ -69,21 +67,11 @@ func playGame(h1 *hangman, done chan bool) {
 			done <- true
 			break
 		}
-		// Console display
-		fmt.Println()
-		fmt.Println(h1.placeholder) // render the placeholder
-		fmt.Println()
-		fmt.Println("Chances left: ", h1.chances) // render the chances left
-		keys := getkeys(h1.entries)               // get the wrong guessed keys
-		fmt.Println()
 
-		fmt.Println(keys) // show the letters or words guessed till now.
-		fmt.Println()
-		fmt.Print("Guess a letter or the word: ")
+		h1.RenderGame()
 
 		// take the input
-		str := ""
-		fmt.Scanln(&str)
+		str := h1.GetInput()
 
 		// compare and update entries, placeholder and chances.
 
@@ -114,7 +102,7 @@ func playGame(h1 *hangman, done chan bool) {
 
 func main() {
 	flag.Parse()
-	h1 := hangman{
+	h1 := hangmanterm{
 		placeholder: []string{},
 		entries:     map[string]bool{},
 		chances:     8,
@@ -132,8 +120,13 @@ func main() {
 	go playGame(&h1, done) // stared a new go routine as playGame.
 
 	select { // select either one of the data from the channel.
-	case <-done: // if user guessed correct word.
-		fmt.Println("Excellent, You win!!")
+	case r := <-done: // if user guessed correct word.
+		if r {
+			fmt.Println("Excellent, You win!!")
+		} else {
+			fmt.Println("You loss! Try Again")
+			fmt.Println("Word: ", h1.word)
+		}
 		break
 	case <-ticker.C: // if the time crosses 30secs(1st tick).
 		fmt.Println("\nTime up!!!")
