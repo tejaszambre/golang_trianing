@@ -21,6 +21,7 @@ type Hangman interface {
 
 var offline = flag.Bool("offline", false, "elephant")
 
+// GetWord is a function that returns a random word from a external api
 func GetWord() string {
 	if *offline { // if dev flag is passed
 		return "elephant"
