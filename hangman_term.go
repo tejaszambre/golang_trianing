@@ -4,10 +4,6 @@ import "fmt"
 
 // HangmanTerm is terminal specific structure
 type HangmanTerm struct {
-	entries     map[string]bool // lookup for entries made by the user.
-	placeholder []string        // list of "_" corrosponding to the number of letters in the word. [ _ _ _ _ _ ]
-	word        string
-	chances     int
 }
 
 // GetInput is exported and used in hangman.go for terminal specific inputs
@@ -19,16 +15,30 @@ func (h HangmanTerm) GetInput() string {
 }
 
 // RenderGame is exported and used in hangman.go for terminal specific renders
-func (h HangmanTerm) RenderGame() {
+func (h HangmanTerm) RenderGame(placeholder []string, entries map[string]bool, chances int) {
 	// Console display
 	fmt.Println()
-	fmt.Println(h.placeholder) // render the placeholder
+	fmt.Println(placeholder) // render the placeholder
 	fmt.Println()
-	fmt.Println("Chances left: ", h.chances) // render the chances left
-	keys := GetKeys(h.entries)               // get the wrong guessed keys
+	fmt.Println("Chances left: ", chances) // render the chances left
+	keys := GetKeys(entries)               // get the wrong guessed keys
 	fmt.Println()
 
 	fmt.Println(keys) // show the letters or words guessed till now.
 	fmt.Println()
 	fmt.Print("Guess a letter or the word: ")
+}
+
+func Term() {
+	h := HangmanTerm{}
+
+	word := GetWord()
+
+	if result, err := PlayGame(&h, word); result == true {
+		fmt.Println("You win! You've saved yourself from a hanging")
+	} else {
+		fmt.Println(err)
+		fmt.Println("Damn! You're hanged!!")
+		fmt.Println("Word was: ", word)
+	}
 }
