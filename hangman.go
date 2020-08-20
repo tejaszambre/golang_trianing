@@ -13,6 +13,7 @@ import (
 // MaxChances is const that are max no of chances a user can have a guess
 const MaxChances int = 8
 
+// Hangman is a interface
 type Hangman interface {
 	RenderGame([]string, map[string]bool, int)
 	GetInput() string
