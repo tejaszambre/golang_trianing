@@ -10,7 +10,8 @@ import (
 	"time"
 )
 
-var MAX_CHANCES int = 8
+// MaxChances is const that are max no of chances a user can have a guess
+const MaxChances int = 8
 
 type Hangman interface {
 	RenderGame([]string, map[string]bool, int)
@@ -58,7 +59,7 @@ func GetKeys(entries map[string]bool) (keys []string) {
 func PlayGame(h Hangman, word string) (r bool, err error) {
 	placeholder := []string{}
 	entries := map[string]bool{}
-	chances := MAX_CHANCES
+	chances := MaxChances
 
 	for i := 0; i < len(word); i++ {
 		placeholder = append(placeholder, "_")
